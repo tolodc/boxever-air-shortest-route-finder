@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
@@ -84,8 +85,9 @@ class ShortestRouteDijkstraFinderTest {
 
         // Then
         assertThat(sydRouteNode.getTotalDistance(), is(expectedTotalDistance));
-        assertThat(givenRouteMap.getSettledRoutes(), containsInAnyOrder(sydRouteNode, bkkRouteNode, lhrRouteNode, dubRouteNode));
+        assertThat(sydRouteNode.getShortestRoute(), contains(dubRouteNode, lhrRouteNode, bkkRouteNode));
         assertThat(givenRouteMap.getUnsettledRoutes(), empty());
+        assertThat(givenRouteMap.getSettledRoutes(), containsInAnyOrder(sydRouteNode, bkkRouteNode, lhrRouteNode, dubRouteNode));
         verify(builder).buildRouteMap();
     }
 
@@ -127,6 +129,7 @@ class ShortestRouteDijkstraFinderTest {
 
         // Then
         assertThat(sydRouteNode.getTotalDistance(), is(expectedTotalDistance));
+        assertThat(sydRouteNode.getShortestRoute(), contains(dubRouteNode, lhrRouteNode, bkkRouteNode));
         assertThat(givenRouteMap.getSettledRoutes(), containsInAnyOrder(sydRouteNode, bkkRouteNode, lhrRouteNode, cdgRouteNode, dubRouteNode));
         assertThat(givenRouteMap.getUnsettledRoutes(), empty());
         verify(builder).buildRouteMap();
@@ -153,6 +156,7 @@ class ShortestRouteDijkstraFinderTest {
 
         // Then
         assertThat(sydRouteNode.getTotalDistance(), is(expectedTotalDistance));
+        assertThat(sydRouteNode.getShortestRoute(), contains(dubRouteNode, lhrRouteNode, bkkRouteNode));
         assertThat(givenRouteMap.getSettledRoutes(), containsInAnyOrder(sydRouteNode, bkkRouteNode, lhrRouteNode, cdgRouteNode, dubRouteNode));
         assertThat(givenRouteMap.getUnsettledRoutes(), empty());
         verify(builder).buildRouteMap();
@@ -179,12 +183,12 @@ class ShortestRouteDijkstraFinderTest {
 
         // Then
         assertThat(sydRouteNode.getTotalDistance(), is(expectedTotalDistance));
+        assertThat(sydRouteNode.getShortestRoute(), contains(dubRouteNode, lhrRouteNode, bkkRouteNode));
         assertThat(givenRouteMap.getSettledRoutes(), containsInAnyOrder(sydRouteNode, bkkRouteNode, lhrRouteNode, cdgRouteNode, dubRouteNode));
         assertThat(givenRouteMap.getUnsettledRoutes(), empty());
         verify(builder).buildRouteMap();
 
     }
-
 
     private RouteMap buildRouteMap(final RouteNode... routeNodes) {
         Map<String, RouteNode> routeNodesMap = new HashMap<>();

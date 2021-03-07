@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -55,7 +56,7 @@ public class ShortestRouteDijkstraFinder implements ShortestRouteFinder {
             if (isFeasibleRoute(route, destinationRoute)) {
                 route.getAvailableRoutes().forEach((connectingRoute, distance) -> {
                     if (isFeasibleConnectingRoute(route, connectingRoute, destinationRoute, distance, routeMap.getSettledRoutes())) {
-                        connectingRoute.setTotalDistance(route.getTotalDistance() + distance);
+                        buildConnectingRoute(route, connectingRoute, distance);
                         routeMap.addUnsettledRoute(connectingRoute);
                     }
                 });
@@ -86,5 +87,12 @@ public class ShortestRouteDijkstraFinder implements ShortestRouteFinder {
         return routes.stream()
                 .min(Comparator.comparing(RouteNode::getTotalDistance))
                 .orElseThrow(NoSuchElementException::new);
+    }
+
+    private void buildConnectingRoute(RouteNode sourceRoute, RouteNode connectingRoute, Integer distance) {
+        LinkedList<RouteNode> shortestPath = new LinkedList<>(sourceRoute.getShortestRoute());
+        shortestPath.add(sourceRoute);
+        connectingRoute.setShortestRoute(shortestPath);
+        connectingRoute.setTotalDistance(sourceRoute.getTotalDistance() + distance);
     }
 }
