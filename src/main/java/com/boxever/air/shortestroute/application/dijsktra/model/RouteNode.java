@@ -24,4 +24,8 @@ public class RouteNode {
 
     @Builder.Default
     private Map<RouteNode, Integer> availableRoutes = new HashMap<>();
+
+    public boolean isDestinationReached() {
+        return totalDistance != Integer.MAX_VALUE;
+    }
 }

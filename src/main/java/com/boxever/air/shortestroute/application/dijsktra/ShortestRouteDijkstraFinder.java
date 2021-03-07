@@ -2,6 +2,8 @@ package com.boxever.air.shortestroute.application.dijsktra;
 
 import com.boxever.air.shortestroute.application.dijsktra.model.RouteMap;
 import com.boxever.air.shortestroute.application.dijsktra.model.RouteNode;
+import com.boxever.air.shortestroute.application.exception.AirportNotFoundException;
+import com.boxever.air.shortestroute.application.exception.RouteNotPossibleException;
 import com.boxever.air.shortestroute.application.port.ShortestRouteFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,21 +24,26 @@ public class ShortestRouteDijkstraFinder implements ShortestRouteFinder {
         RouteMap routeMap = builder.buildRouteMap();
 
         if (!routeMap.getRoutes().containsKey(departure)) {
-            throw new IllegalArgumentException("Departure airport not found.");
+            throw new AirportNotFoundException("Departure airport not found.");
         }
 
         if (!routeMap.getRoutes().containsKey(arrival)) {
-            throw new IllegalArgumentException("Arrival airport not found.");
+            throw new AirportNotFoundException("Arrival airport not found.");
         }
 
-        buildShortestRoute(routeMap, departure);
+        RouteNode destinationRoute = buildShortestRoute(routeMap, departure, arrival);
+
+        if (!destinationRoute.isDestinationReached()) {
+            throw new RouteNotPossibleException("Destination not reachable with current air connectivity.");
+        }
 
         return null;
     }
 
-    public void buildShortestRoute(final RouteMap routeMap, final String departure) {
+    public RouteNode buildShortestRoute(final RouteMap routeMap, final String departure, final String arrival) {
 
         RouteNode sourceRoute = routeMap.getRoutes().get(departure);
+        RouteNode destinationRoute = routeMap.getRoutes().get(arrival);
         sourceRoute.setTotalDistance(0);
 
         routeMap.addUnsettledRoute(sourceRoute);
@@ -52,6 +59,8 @@ public class ShortestRouteDijkstraFinder implements ShortestRouteFinder {
 
             routeMap.addSettledRoute(route);
         }
+
+        return destinationRoute;
     }
 
     private RouteNode findClosestNode(Set<RouteNode> routes) {

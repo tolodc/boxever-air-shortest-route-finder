@@ -2,6 +2,8 @@ package com.boxever.air.shortestroute.application.dijsktra;
 
 import com.boxever.air.shortestroute.application.dijsktra.model.RouteMap;
 import com.boxever.air.shortestroute.application.dijsktra.model.RouteNode;
+import com.boxever.air.shortestroute.application.exception.AirportNotFoundException;
+import com.boxever.air.shortestroute.application.exception.RouteNotPossibleException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -41,7 +43,7 @@ class ShortestRouteDijkstraFinderTest {
         when(builder.buildRouteMap()).thenReturn(givenRouteMap);
 
         // When
-        assertThrows(IllegalArgumentException.class, () -> dijkstraFinder.find(givenDeparture, givenArrival));
+        assertThrows(AirportNotFoundException.class, () -> dijkstraFinder.find(givenDeparture, givenArrival));
 
         // Then
         verify(builder).buildRouteMap();
@@ -57,7 +59,7 @@ class ShortestRouteDijkstraFinderTest {
         when(builder.buildRouteMap()).thenReturn(givenRouteMap);
 
         // When
-        assertThrows(IllegalArgumentException.class, () -> dijkstraFinder.find(givenDeparture, givenArrival));
+        assertThrows(AirportNotFoundException.class, () -> dijkstraFinder.find(givenDeparture, givenArrival));
 
         // Then
         verify(builder).buildRouteMap();
@@ -81,6 +83,26 @@ class ShortestRouteDijkstraFinderTest {
 
         // Then
         assertThat(sydRouteNode.getTotalDistance(), is(expectedTotalDistance));
+        verify(builder).buildRouteMap();
+
+    }
+
+    @Test
+    void find_should_throw_exception_if_destination_is_not_possible() {
+        // Given
+        final RouteNode sydRouteNode = RouteNode.builder().airport(SYD).build();
+        final RouteNode bkkRouteNode = RouteNode.builder().airport(BKK).availableRoutes(Map.of(sydRouteNode, 11)).build();
+        final RouteNode lhrRouteNode = RouteNode.builder().airport(LHR).availableRoutes(Map.of(bkkRouteNode, 9)).build();
+        final RouteNode dubRouteNode = RouteNode.builder().airport(DUB).availableRoutes(Map.of(lhrRouteNode, 1)).build();
+
+        final RouteMap givenRouteMap = buildRouteMap(sydRouteNode, bkkRouteNode, lhrRouteNode, dubRouteNode);
+
+        when(builder.buildRouteMap()).thenReturn(givenRouteMap);
+
+        // When
+        assertThrows(RouteNotPossibleException.class, () -> dijkstraFinder.find(SYD, DUB));
+
+        // Then
         verify(builder).buildRouteMap();
 
     }
