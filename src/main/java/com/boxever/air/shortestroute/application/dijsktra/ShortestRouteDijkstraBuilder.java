@@ -19,7 +19,7 @@ public class ShortestRouteDijkstraBuilder {
 
     private final RouteRepository repository;
 
-    public RouteMap buildRouteNodes() {
+    public RouteMap buildRouteMap() {
 
         Map<String, List<Route>> routeConnectivity =
                 repository.getAllRoutes().stream().collect(groupingBy(Route::getDepartureAirport));

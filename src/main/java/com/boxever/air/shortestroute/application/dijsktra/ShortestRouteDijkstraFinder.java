@@ -13,7 +13,7 @@ public class ShortestRouteDijkstraFinder implements ShortestRouteFinder {
 
     @Override
     public String find(String departure, String arrival) {
-        RouteMap routeMap = builder.buildRouteNodes();
+        RouteMap routeMap = builder.buildRouteMap();
 
         if (!routeMap.getRoutes().containsKey(departure)) {
             throw new IllegalArgumentException("Departure airport not found.");

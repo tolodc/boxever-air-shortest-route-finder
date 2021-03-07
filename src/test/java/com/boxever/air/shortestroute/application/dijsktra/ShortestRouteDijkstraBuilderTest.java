@@ -42,7 +42,7 @@ class ShortestRouteDijkstraBuilderTest {
         when(repository.getAllAirports()).thenReturn(givenAirports);
 
         // When
-        RouteMap routeMap = dijkstraBuilder.buildRouteNodes();
+        RouteMap routeMap = dijkstraBuilder.buildRouteMap();
 
         // Then
         assertThat(routeMap, is(notNullValue()));
@@ -59,7 +59,7 @@ class ShortestRouteDijkstraBuilderTest {
         when(repository.getAllAirports()).thenReturn(givenAirports);
 
         // When
-        RouteMap routeMap = dijkstraBuilder.buildRouteNodes();
+        RouteMap routeMap = dijkstraBuilder.buildRouteMap();
 
         // Then
         assertRouteMapKeys(routeMap, givenDepartureAirport, givenArrivalAirport);
@@ -81,7 +81,7 @@ class ShortestRouteDijkstraBuilderTest {
         when(repository.getAllRoutes()).thenReturn(givenRoutes);
 
         // When
-        RouteMap routeMap = dijkstraBuilder.buildRouteNodes();
+        RouteMap routeMap = dijkstraBuilder.buildRouteMap();
 
         // Then
         assertRouteMapKeys(routeMap, givenDepartureAirport, givenArrivalAirport);
@@ -115,7 +115,7 @@ class ShortestRouteDijkstraBuilderTest {
         when(repository.getAllRoutes()).thenReturn(givenRoutes);
 
         // When
-        RouteMap routeMap = dijkstraBuilder.buildRouteNodes();
+        RouteMap routeMap = dijkstraBuilder.buildRouteMap();
 
         // Then
         assertRouteMapKeys(routeMap, givenDepartureAirport, givenArrivalAirport, givenSecondArrivalAirport);
@@ -151,7 +151,7 @@ class ShortestRouteDijkstraBuilderTest {
         when(repository.getAllRoutes()).thenReturn(givenRoutes);
 
         // When
-        RouteMap routeMap = dijkstraBuilder.buildRouteNodes();
+        RouteMap routeMap = dijkstraBuilder.buildRouteMap();
 
         // Then
         assertRouteMapKeys(routeMap, givenDepartureAirport, givenSecondDepartureAirport, givenArrivalAirport);

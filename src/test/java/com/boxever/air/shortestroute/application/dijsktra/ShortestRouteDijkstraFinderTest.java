@@ -36,13 +36,13 @@ class ShortestRouteDijkstraFinderTest {
                 .routes(routeNodes)
                 .build();
 
-        when(builder.buildRouteNodes()).thenReturn(givenRouteMap);
+        when(builder.buildRouteMap()).thenReturn(givenRouteMap);
 
         // When
         assertThrows(IllegalArgumentException.class, () -> dijkstraFinder.find(givenDeparture, givenArrival));
 
         // Then
-        verify(builder).buildRouteNodes();
+        verify(builder).buildRouteMap();
     }
 
     @Test
@@ -58,13 +58,13 @@ class ShortestRouteDijkstraFinderTest {
                 .routes(routeNodes)
                 .build();
 
-        when(builder.buildRouteNodes()).thenReturn(givenRouteMap);
+        when(builder.buildRouteMap()).thenReturn(givenRouteMap);
 
         // When
         assertThrows(IllegalArgumentException.class, () -> dijkstraFinder.find(givenDeparture, givenArrival));
 
         // Then
-        verify(builder).buildRouteNodes();
+        verify(builder).buildRouteMap();
     }
 
 }
