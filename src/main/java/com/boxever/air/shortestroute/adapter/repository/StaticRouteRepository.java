@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Repository
@@ -18,14 +17,14 @@ public class StaticRouteRepository implements RouteRepository, InitializingBean 
     private List<Route> routes;
 
     @Override
-    public List<Route> findAllRoutes() {
+    public List<Route> getAllRoutes() {
         return routes;
     }
 
     @Override
-    public Set<String> findAllAirports() {
-        Set<String> airports = routes.stream().map(Route::getDepartureAirport).collect(Collectors.toSet());
-        airports.addAll(routes.stream().map(Route::getArrivalAirport).collect(Collectors.toSet()));
+    public List<String> getAllAirports() {
+        List<String> airports = routes.stream().map(Route::getDepartureAirport).collect(Collectors.toList());
+        airports.addAll(routes.stream().map(Route::getArrivalAirport).collect(Collectors.toList()));
         return airports;
     }
 
