@@ -17,7 +17,7 @@ public class ShortestRouteDijkstraBuilder {
 
     public RouteMap buildRouteNodes() {
 
-        Map<String, RouteNode> routeNodes = repository.findAllAirports().stream()
+        Map<String, RouteNode> routeNodes = repository.getAllAirports().stream()
                 .collect(Collectors.toMap(
                         airport -> airport,
                         airport -> RouteNode.builder().airport(airport).build()));

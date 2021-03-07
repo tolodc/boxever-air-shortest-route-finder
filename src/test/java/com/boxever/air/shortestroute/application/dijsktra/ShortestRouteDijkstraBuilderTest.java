@@ -8,9 +8,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Set;
+import java.util.List;
 
-import static java.util.Collections.emptySet;
+import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.anEmptyMap;
@@ -31,8 +31,8 @@ class ShortestRouteDijkstraBuilderTest {
     @Test
     void buildRouteNodes_should_call_repository_and_create_a_routemap_without_nodes_when_no_airports_given() {
         // Given
-        final Set<String> givenAirports = emptySet();
-        when(repository.findAllAirports()).thenReturn(givenAirports);
+        final List<String> givenAirports = emptyList();
+        when(repository.getAllAirports()).thenReturn(givenAirports);
 
         // When
         RouteMap routeMap = dijkstraBuilder.buildRouteNodes();
@@ -40,14 +40,14 @@ class ShortestRouteDijkstraBuilderTest {
         // Then
         assertThat(routeMap, is(notNullValue()));
         assertThat(routeMap.getRoutes(), anEmptyMap());
-        verify(repository).findAllAirports();
+        verify(repository).getAllAirports();
     }
 
     @Test
     void buildRouteNodes_should_call_repository_and_create_a_routemap_with_a_route_node_for_each_given_airport() {
         // Given
-        final Set<String> givenAirports = Set.of("AIRPORT_ONE", "AIRPORT_TWO");
-        when(repository.findAllAirports()).thenReturn(givenAirports);
+        final List<String> givenAirports = List.of("AIRPORT_ONE", "AIRPORT_TWO");
+        when(repository.getAllAirports()).thenReturn(givenAirports);
 
         // When
         RouteMap routeMap = dijkstraBuilder.buildRouteNodes();
@@ -55,7 +55,8 @@ class ShortestRouteDijkstraBuilderTest {
         // Then
         assertThat(routeMap, is(notNullValue()));
         assertThat(routeMap.getRoutes(), aMapWithSize(givenAirports.size()));
-        verify(repository).findAllAirports();
+        verify(repository).getAllAirports();
     }
+
 
 }
