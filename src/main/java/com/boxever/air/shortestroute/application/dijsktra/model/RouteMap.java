@@ -21,4 +21,15 @@ public class RouteMap {
     @Builder.Default
     private final Set<RouteNode> unsettledRoutes = new HashSet<>();
 
+    public void addSettledRoute(final RouteNode routeNode) {
+        this.settledRoutes.add(routeNode);
+    }
+
+    public void addUnsettledRoute(final RouteNode routeNode) {
+        this.unsettledRoutes.add(routeNode);
+    }
+
+    public void removeUnsettledRoute(final RouteNode routeNode) {
+        this.unsettledRoutes.remove(routeNode);
+    }
 }
