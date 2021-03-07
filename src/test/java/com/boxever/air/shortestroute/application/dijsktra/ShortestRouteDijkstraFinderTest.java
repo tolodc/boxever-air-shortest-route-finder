@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 class ShortestRouteDijkstraFinderTest {
 
     private static final String DUB = "DUB";
+    private static final String CDG = "CDG";
     private static final String LHR = "LHR";
     private static final String BKK = "BKK";
     private static final String SYD = "SYD";
@@ -39,7 +40,6 @@ class ShortestRouteDijkstraFinderTest {
         final String givenDeparture = DUB;
         final String givenArrival = SYD;
         final RouteMap givenRouteMap = buildRouteMap(RouteNode.builder().airport(givenArrival).build());
-
         when(builder.buildRouteMap()).thenReturn(givenRouteMap);
 
         // When
@@ -55,7 +55,6 @@ class ShortestRouteDijkstraFinderTest {
         final String givenDeparture = DUB;
         final String givenArrival = SYD;
         final RouteMap givenRouteMap = buildRouteMap(RouteNode.builder().airport(givenDeparture).build());
-
         when(builder.buildRouteMap()).thenReturn(givenRouteMap);
 
         // When
@@ -75,7 +74,6 @@ class ShortestRouteDijkstraFinderTest {
         final int expectedTotalDistance = 11+9+1;
 
         final RouteMap givenRouteMap = buildRouteMap(sydRouteNode, bkkRouteNode, lhrRouteNode, dubRouteNode);
-
         when(builder.buildRouteMap()).thenReturn(givenRouteMap);
 
         // When
@@ -96,13 +94,35 @@ class ShortestRouteDijkstraFinderTest {
         final RouteNode dubRouteNode = RouteNode.builder().airport(DUB).availableRoutes(Map.of(lhrRouteNode, 1)).build();
 
         final RouteMap givenRouteMap = buildRouteMap(sydRouteNode, bkkRouteNode, lhrRouteNode, dubRouteNode);
-
         when(builder.buildRouteMap()).thenReturn(givenRouteMap);
 
         // When
         assertThrows(RouteNotPossibleException.class, () -> dijkstraFinder.find(SYD, DUB));
 
         // Then
+        verify(builder).buildRouteMap();
+
+    }
+
+    @Test
+    void find_should_find_shortest_route_if_two_routes_are_possible() {
+        // Given
+        final RouteNode sydRouteNode = RouteNode.builder().airport(SYD).build();
+        final RouteNode bkkRouteNode = RouteNode.builder().airport(BKK).availableRoutes(Map.of(sydRouteNode, 11)).build();
+        final RouteNode lhrRouteNode = RouteNode.builder().airport(LHR).availableRoutes(Map.of(bkkRouteNode, 9)).build();
+        final RouteNode cdgRouteNode = RouteNode.builder().airport(CDG).availableRoutes(Map.of(bkkRouteNode, 9)).build();
+        final RouteNode dubRouteNode = RouteNode.builder().airport(DUB).availableRoutes(Map.of(lhrRouteNode, 1, cdgRouteNode, 2)).build();
+        final int expectedTotalDistance = 11+9+1;
+
+        final RouteMap givenRouteMap = buildRouteMap(sydRouteNode, bkkRouteNode, lhrRouteNode, dubRouteNode);
+
+        when(builder.buildRouteMap()).thenReturn(givenRouteMap);
+
+        // When
+        dijkstraFinder.find(DUB, SYD);
+
+        // Then
+        assertThat(sydRouteNode.getTotalDistance(), is(expectedTotalDistance));
         verify(builder).buildRouteMap();
 
     }

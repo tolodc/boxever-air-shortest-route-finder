@@ -53,14 +53,20 @@ public class ShortestRouteDijkstraFinder implements ShortestRouteFinder {
             routeMap.removeUnsettledRoute(route);
 
             route.getAvailableRoutes().forEach((connectingRoute, distance) -> {
-                connectingRoute.setTotalDistance(route.getTotalDistance() + distance);
-                routeMap.addUnsettledRoute(connectingRoute);
+                if (!isExceededDistance(route.getTotalDistance() + distance, connectingRoute)) {
+                    connectingRoute.setTotalDistance(route.getTotalDistance() + distance);
+                    routeMap.addUnsettledRoute(connectingRoute);
+                }
             });
 
             routeMap.addSettledRoute(route);
         }
 
         return destinationRoute;
+    }
+
+    private boolean isExceededDistance(final int distance, final RouteNode arrivalNode) {
+        return distance >= arrivalNode.getTotalDistance();
     }
 
     private RouteNode findClosestNode(Set<RouteNode> routes) {
