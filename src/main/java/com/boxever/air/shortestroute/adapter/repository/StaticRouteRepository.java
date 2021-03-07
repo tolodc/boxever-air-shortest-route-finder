@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -23,9 +24,9 @@ public class StaticRouteRepository implements RouteRepository, InitializingBean 
 
     @Override
     public List<String> getAllAirports() {
-        List<String> airports = routes.stream().map(Route::getDepartureAirport).collect(Collectors.toList());
-        airports.addAll(routes.stream().map(Route::getArrivalAirport).collect(Collectors.toList()));
-        return airports;
+        return Stream.concat(routes.stream().map(Route::getDepartureAirport), routes.stream().map(Route::getArrivalAirport))
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     @Override

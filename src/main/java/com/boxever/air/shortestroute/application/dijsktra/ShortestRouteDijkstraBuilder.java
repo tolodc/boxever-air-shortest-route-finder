@@ -5,6 +5,7 @@ import com.boxever.air.shortestroute.application.dijsktra.model.RouteMap;
 import com.boxever.air.shortestroute.application.dijsktra.model.RouteNode;
 import com.boxever.air.shortestroute.domain.model.Route;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,8 +20,8 @@ public class ShortestRouteDijkstraBuilder {
 
     private final RouteRepository repository;
 
+    @Cacheable("dijkstraRouteMap")
     public RouteMap buildRouteMap() {
-
         Map<String, List<Route>> routeConnectivity =
                 repository.getAllRoutes().stream().collect(groupingBy(Route::getDepartureAirport));
 
