@@ -19,6 +19,7 @@ import java.util.Set;
 public class ShortestRouteDijkstraFinder implements ShortestRouteFinder {
 
     private final ShortestRouteDijkstraBuilder builder;
+    private final ShortestDistanceDijkstraPrinter printer;
 
     @Override
     public String find(String departure, String arrival) {
@@ -38,7 +39,7 @@ public class ShortestRouteDijkstraFinder implements ShortestRouteFinder {
             throw new RouteNotPossibleException("Destination not reachable with current air connectivity.");
         }
 
-        return null;
+        return printer.print(destinationRoute);
     }
 
     public RouteNode buildShortestRoute(final RouteMap routeMap, final String departure, final String arrival) {
