@@ -54,7 +54,7 @@ public class ShortestRouteDijkstraFinder implements ShortestRouteFinder {
 
             if (isFeasibleRoute(route, destinationRoute)) {
                 route.getAvailableRoutes().forEach((connectingRoute, distance) -> {
-                    if (isFeasibleConnectingRoute(route, connectingRoute, distance, routeMap.getSettledRoutes())) {
+                    if (isFeasibleConnectingRoute(route, connectingRoute, destinationRoute, distance, routeMap.getSettledRoutes())) {
                         connectingRoute.setTotalDistance(route.getTotalDistance() + distance);
                         routeMap.addUnsettledRoute(connectingRoute);
                     }
@@ -71,9 +71,10 @@ public class ShortestRouteDijkstraFinder implements ShortestRouteFinder {
         return !isExceededDistance(route.getTotalDistance(), destination);
     }
 
-    private boolean isFeasibleConnectingRoute(final RouteNode route, final RouteNode connectingRoute,
+    private boolean isFeasibleConnectingRoute(final RouteNode route, final RouteNode connectingRoute, final RouteNode destinationRoute,
                                               final Integer distance, final Set<RouteNode> settledNodes) {
-        return !settledNodes.contains(connectingRoute)
+        return  !settledNodes.contains(connectingRoute)
+                && !isExceededDistance(route.getTotalDistance() + distance, destinationRoute)
                 && !isExceededDistance(route.getTotalDistance() + distance, connectingRoute);
     }
 

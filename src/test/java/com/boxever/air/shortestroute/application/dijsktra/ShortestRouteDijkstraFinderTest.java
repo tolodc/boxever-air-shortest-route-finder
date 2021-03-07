@@ -159,6 +159,32 @@ class ShortestRouteDijkstraFinderTest {
 
     }
 
+    @Test
+    void find_should_discard_route_if_current_distance_plus_distance_is_already_larger_than_destination() {
+        // Given
+        final RouteNode sydRouteNode = RouteNode.builder().airport(SYD).build();
+        final RouteNode bkkRouteNode = RouteNode.builder().airport(BKK).availableRoutes(Map.of(sydRouteNode, 11)).build();
+        final RouteNode bosRouteNode = RouteNode.builder().airport(BOS).availableRoutes(Map.of(sydRouteNode, 14)).build();
+        final RouteNode lhrRouteNode = RouteNode.builder().airport(LHR).availableRoutes(Map.of(bkkRouteNode, 9)).build();
+        final RouteNode cdgRouteNode = RouteNode.builder().airport(CDG).availableRoutes(Map.of(bkkRouteNode, 9, bosRouteNode, 6)).build();
+        final RouteNode dubRouteNode = RouteNode.builder().airport(DUB).availableRoutes(Map.of(lhrRouteNode, 1, cdgRouteNode, 20)).build();
+        final int expectedTotalDistance = 11+9+1;
+
+        final RouteMap givenRouteMap = buildRouteMap(sydRouteNode, bkkRouteNode, lhrRouteNode, dubRouteNode);
+
+        when(builder.buildRouteMap()).thenReturn(givenRouteMap);
+
+        // When
+        dijkstraFinder.find(DUB, SYD);
+
+        // Then
+        assertThat(sydRouteNode.getTotalDistance(), is(expectedTotalDistance));
+        assertThat(givenRouteMap.getSettledRoutes(), containsInAnyOrder(sydRouteNode, bkkRouteNode, lhrRouteNode, cdgRouteNode, dubRouteNode));
+        assertThat(givenRouteMap.getUnsettledRoutes(), empty());
+        verify(builder).buildRouteMap();
+
+    }
+
 
     private RouteMap buildRouteMap(final RouteNode... routeNodes) {
         Map<String, RouteNode> routeNodesMap = new HashMap<>();
