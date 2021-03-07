@@ -26,6 +26,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ShortestRouteDijkstraBuilderTest {
 
+    private static final String AIRPORT_ONE = "AIRPORT_ONE";
+    private static final String AIRPORT_TWO = "AIRPORT_TWO";
+
     @Mock
     private RouteRepository repository;
 
@@ -50,23 +53,25 @@ class ShortestRouteDijkstraBuilderTest {
     @Test
     void buildRouteNodes_should_call_repository_and_create_a_routemap_with_a_route_node_for_each_given_airport() {
         // Given
-        final List<String> givenAirports = List.of("AIRPORT_ONE", "AIRPORT_TWO");
+        final String givenDepartureAirport = AIRPORT_ONE;
+        final String givenArrivalAirport = AIRPORT_TWO;
+        final List<String> givenAirports = List.of(givenDepartureAirport, givenArrivalAirport);
         when(repository.getAllAirports()).thenReturn(givenAirports);
 
         // When
         RouteMap routeMap = dijkstraBuilder.buildRouteNodes();
 
         // Then
-        assertThat(routeMap, is(notNullValue()));
-        assertThat(routeMap.getRoutes(), aMapWithSize(givenAirports.size()));
+        assertRouteMapKeys(routeMap, givenDepartureAirport, givenArrivalAirport);
+
         verify(repository).getAllAirports();
     }
 
     @Test
     void buildRouteNodes_should_create_route_node_with_available_route_and_a_route_node_without_available_routes_given_only_a_route() {
         // Given
-        final String givenDepartureAirport = "AIRPORT_ONE";
-        final String givenArrivalAirport = "AIRPORT_TWO";
+        final String givenDepartureAirport = AIRPORT_ONE;
+        final String givenArrivalAirport = AIRPORT_TWO;
         final int givenDuration = 1;
         final List<String> givenAirports = List.of(givenDepartureAirport, givenArrivalAirport);
         final Route givenRoute = buildRoute(givenDepartureAirport, givenArrivalAirport, givenDuration);
@@ -79,10 +84,7 @@ class ShortestRouteDijkstraBuilderTest {
         RouteMap routeMap = dijkstraBuilder.buildRouteNodes();
 
         // Then
-        assertThat(routeMap, is(notNullValue()));
-        assertThat(routeMap.getRoutes(), aMapWithSize(givenAirports.size()));
-        assertThat(routeMap.getRoutes(), hasKey(givenDepartureAirport));
-        assertThat(routeMap.getRoutes(), hasKey(givenArrivalAirport));
+        assertRouteMapKeys(routeMap, givenDepartureAirport, givenArrivalAirport);
 
         RouteNode departureRouteNode = routeMap.getRoutes().get(givenDepartureAirport);
         RouteNode arrivalRouteNode = routeMap.getRoutes().get(givenArrivalAirport);
@@ -99,8 +101,8 @@ class ShortestRouteDijkstraBuilderTest {
     @Test
     void buildRouteNodes_should_create_route_node_with_available_routes_and_two_route_nodes_without_available_routes_given_only_two_route_from_same_departure() {
         // Given
-        final String givenDepartureAirport = "AIRPORT_ONE";
-        final String givenArrivalAirport = "AIRPORT_TWO";
+        final String givenDepartureAirport = AIRPORT_ONE;
+        final String givenArrivalAirport = AIRPORT_TWO;
         final String givenSecondArrivalAirport = "AIRPORT_THREE";
         final int givenDuration = 1;
         final int givenSecondDuration = 2;
@@ -116,11 +118,7 @@ class ShortestRouteDijkstraBuilderTest {
         RouteMap routeMap = dijkstraBuilder.buildRouteNodes();
 
         // Then
-        assertThat(routeMap, is(notNullValue()));
-        assertThat(routeMap.getRoutes(), aMapWithSize(givenAirports.size()));
-        assertThat(routeMap.getRoutes(), hasKey(givenDepartureAirport));
-        assertThat(routeMap.getRoutes(), hasKey(givenArrivalAirport));
-        assertThat(routeMap.getRoutes(), hasKey(givenSecondArrivalAirport));
+        assertRouteMapKeys(routeMap, givenDepartureAirport, givenArrivalAirport, givenSecondArrivalAirport);
 
         RouteNode departureRouteNode = routeMap.getRoutes().get(givenDepartureAirport);
         RouteNode arrivalRouteNode = routeMap.getRoutes().get(givenArrivalAirport);
@@ -139,8 +137,8 @@ class ShortestRouteDijkstraBuilderTest {
     @Test
     void buildRouteNodes_should_create_route_two_nodes_with_available_routes_and_a_route_node_without_available_routes_given_only_two_route_from_different_departure_and_same_arrival() {
         // Given
-        final String givenDepartureAirport = "AIRPORT_ONE";
-        final String givenSecondDepartureAirport = "AIRPORT_TWO";
+        final String givenDepartureAirport = AIRPORT_ONE;
+        final String givenSecondDepartureAirport = AIRPORT_TWO;
         final String givenArrivalAirport = "AIRPORT_THREE";
         final int givenDuration = 1;
         final int givenSecondDuration = 2;
@@ -156,11 +154,7 @@ class ShortestRouteDijkstraBuilderTest {
         RouteMap routeMap = dijkstraBuilder.buildRouteNodes();
 
         // Then
-        assertThat(routeMap, is(notNullValue()));
-        assertThat(routeMap.getRoutes(), aMapWithSize(givenAirports.size()));
-        assertThat(routeMap.getRoutes(), hasKey(givenDepartureAirport));
-        assertThat(routeMap.getRoutes(), hasKey(givenSecondDepartureAirport));
-        assertThat(routeMap.getRoutes(), hasKey(givenArrivalAirport));
+        assertRouteMapKeys(routeMap, givenDepartureAirport, givenSecondDepartureAirport, givenArrivalAirport);
 
         RouteNode departureRouteNode = routeMap.getRoutes().get(givenDepartureAirport);
         RouteNode departureSecondRouteNode = routeMap.getRoutes().get(givenSecondDepartureAirport);
@@ -175,6 +169,14 @@ class ShortestRouteDijkstraBuilderTest {
         verify(repository).getAllAirports();
         verify(repository).getAllRoutes();
 
+    }
+
+    private void assertRouteMapKeys(final RouteMap routeMap, final String... keys){
+        assertThat(routeMap, is(notNullValue()));
+        assertThat(routeMap.getRoutes(), aMapWithSize(keys.length));
+        for (String key: keys) {
+            assertThat(routeMap.getRoutes(), hasKey(key));
+        }
     }
 
     private Route buildRoute(String givenDepartureAirport, String givenSecondArrivalAirport, int givenSecondDuration) {
