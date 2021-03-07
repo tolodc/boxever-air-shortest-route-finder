@@ -19,6 +19,10 @@ public class ShortestRouteDijkstraFinder implements ShortestRouteFinder {
             throw new IllegalArgumentException("Departure airport not found.");
         }
 
+        if (!routeMap.getRoutes().containsKey(arrival)) {
+            throw new IllegalArgumentException("Arrival airport not found.");
+        }
+
         return null;
     }
 }

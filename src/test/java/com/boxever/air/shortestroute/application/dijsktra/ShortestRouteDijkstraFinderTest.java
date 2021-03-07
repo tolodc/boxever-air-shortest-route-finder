@@ -52,7 +52,7 @@ class ShortestRouteDijkstraFinderTest {
         final String givenArrival = "YYY";
 
         final Map<String, RouteNode> routeNodes = Map.of(
-                givenArrival, RouteNode.builder().airport(givenDeparture).build()
+                givenDeparture, RouteNode.builder().airport(givenDeparture).build()
         );
         final RouteMap givenRouteMap = RouteMap.builder()
                 .routes(routeNodes)
