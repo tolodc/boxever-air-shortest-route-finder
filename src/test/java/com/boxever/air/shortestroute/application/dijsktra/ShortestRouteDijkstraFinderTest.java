@@ -19,6 +19,8 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -34,6 +36,9 @@ class ShortestRouteDijkstraFinderTest {
 
     @Mock
     private ShortestRouteDijkstraBuilder builder;
+
+    @Mock
+    private ShortestDistanceDijkstraPrinter printer;
 
     @InjectMocks
     private ShortestRouteDijkstraFinder dijkstraFinder;
@@ -51,6 +56,7 @@ class ShortestRouteDijkstraFinderTest {
 
         // Then
         verify(builder).buildRouteMap();
+        verify(printer, times(0)).print(any());
     }
 
     @Test
@@ -66,6 +72,7 @@ class ShortestRouteDijkstraFinderTest {
 
         // Then
         verify(builder).buildRouteMap();
+        verify(printer, times(0)).print(any());
     }
 
     @Test
@@ -89,6 +96,7 @@ class ShortestRouteDijkstraFinderTest {
         assertThat(givenRouteMap.getUnsettledRoutes(), empty());
         assertThat(givenRouteMap.getSettledRoutes(), containsInAnyOrder(sydRouteNode, bkkRouteNode, lhrRouteNode, dubRouteNode));
         verify(builder).buildRouteMap();
+        verify(printer).print(sydRouteNode);
     }
 
     @Test
@@ -107,7 +115,7 @@ class ShortestRouteDijkstraFinderTest {
 
         // Then
         verify(builder).buildRouteMap();
-
+        verify(printer, times(0)).print(any());
     }
 
     @Test
@@ -133,7 +141,7 @@ class ShortestRouteDijkstraFinderTest {
         assertThat(givenRouteMap.getSettledRoutes(), containsInAnyOrder(sydRouteNode, bkkRouteNode, lhrRouteNode, cdgRouteNode, dubRouteNode));
         assertThat(givenRouteMap.getUnsettledRoutes(), empty());
         verify(builder).buildRouteMap();
-
+        verify(printer).print(sydRouteNode);
     }
 
     @Test
@@ -160,7 +168,7 @@ class ShortestRouteDijkstraFinderTest {
         assertThat(givenRouteMap.getSettledRoutes(), containsInAnyOrder(sydRouteNode, bkkRouteNode, lhrRouteNode, cdgRouteNode, dubRouteNode));
         assertThat(givenRouteMap.getUnsettledRoutes(), empty());
         verify(builder).buildRouteMap();
-
+        verify(printer).print(sydRouteNode);
     }
 
     @Test
@@ -187,7 +195,7 @@ class ShortestRouteDijkstraFinderTest {
         assertThat(givenRouteMap.getSettledRoutes(), containsInAnyOrder(sydRouteNode, bkkRouteNode, lhrRouteNode, cdgRouteNode, dubRouteNode));
         assertThat(givenRouteMap.getUnsettledRoutes(), empty());
         verify(builder).buildRouteMap();
-
+        verify(printer).print(sydRouteNode);
     }
 
     private RouteMap buildRouteMap(final RouteNode... routeNodes) {
